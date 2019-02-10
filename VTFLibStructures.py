@@ -1,12 +1,15 @@
 from ctypes import *
 try:
     from VTFLibEnums import *
-except:
+except BaseException:
     from .VTFLibEnums import *
+
 
 class ImageFormatInfo(Structure):
     def get_name(self):
-        return self.name.value if self.name !=0 else "NONE"
+        return self.name.value if self.name != 0 else "NONE"
+
+
 ImageFormatInfo._fields_ = [
     ('name', c_char_p),
     ('BitsPerPixel', c_uint32),
@@ -17,16 +20,19 @@ ImageFormatInfo._fields_ = [
     ('AlphaBitsPerPixel', c_uint32),
     ('IsCompressed', c_bool),
     ('IsSupported', c_bool),
-    ]
+]
+
 
 class CreateOptions(Structure):
     def __repr__(self):
         template = "CreateOptions (\n{}"
         mem_template = "\t{}: {}\n"
         mems = []
-        for name,tp in self._fields_:
-            mems.append(mem_template.format(name,getattr(self,name)))
-        return template.format(''.join(mems))+')'
+        for name, tp in self._fields_:
+            mems.append(mem_template.format(name, getattr(self, name)))
+        return template.format(''.join(mems)) + ')'
+
+
 CreateOptions._pack_ = 1
 CreateOptions._fields_ = [
     ('VersionMajor', c_uint32),
@@ -66,8 +72,12 @@ CreateOptions._fields_ = [
     ('NormalInvertZ', c_bool),
     ('SphereMap', c_bool),
 ]
+
+
 class LODControlResource(Structure):
     pass
+
+
 LODControlResource._fields_ = [
     ('ResolutionClampU', c_byte),
     ('ResolutionClampV', c_byte),
@@ -75,6 +85,3 @@ LODControlResource._fields_ = [
     ('Padding1', c_byte),
 
 ]
-
-
-

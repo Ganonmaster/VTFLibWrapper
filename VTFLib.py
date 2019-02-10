@@ -14,7 +14,7 @@ except Exception:
                    VTFLibStructures,
                    VTFLibConstants)
 
-platform_name =  platform.system()
+platform_name = platform.system()
 
 if platform_name == "Windows":
     is64bit = platform.architecture(executable=sys.executable,
@@ -25,12 +25,14 @@ if platform_name == "Windows":
 elif platform_name == "Linux":
     # On linux we assume this lib is in a predictable location
     # VTFLib Linux: https://github.com/panzi/VTFLib
-    # requires: libtxc_dxtn 
+    # requires: libtxc_dxtn
     vtf_lib_name = "libVTFLib13.so"
 else:
     raise NotImplementedError()
 
 # TODO: move to util?
+
+
 def pointer_to_array(poiter, size, type=c_ubyte):
     return cast(poiter, POINTER(type * size))
 
@@ -155,7 +157,8 @@ class VTFLib:
         self.DeleteImage(image)
 
     ImageCreateDefaultCreateStructure = vtflib_cdll.vlImageCreateDefaultCreateStructure
-    ImageCreateDefaultCreateStructure.argtypes = [POINTER(VTFLibStructures.CreateOptions)]
+    ImageCreateDefaultCreateStructure.argtypes = [
+        POINTER(VTFLibStructures.CreateOptions)]
     ImageCreateDefaultCreateStructure.restype = None
 
     def create_default_params_structure(self):
@@ -168,15 +171,19 @@ class VTFLib:
                             c_bool]
     ImageCreate.restype = c_byte
 
-    def image_create(self, width, height, frames, faces, slices, image_format, thumbnail, mipmaps, nulldata):
-        return self.ImageCreate(width, height, frames, faces, slices, image_format, thumbnail, mipmaps, nulldata)
+    def image_create(self, width, height, frames, faces, slices,
+                     image_format, thumbnail, mipmaps, nulldata):
+        return self.ImageCreate(width, height, frames, faces,
+                                slices, image_format, thumbnail, mipmaps, nulldata)
 
     ImageCreateSingle = vtflib_cdll.vlImageCreateSingle
-    ImageCreateSingle.argtypes = [c_int32, c_int32, POINTER(c_byte), POINTER(VTFLibStructures.CreateOptions)]
+    ImageCreateSingle.argtypes = [
+        c_int32, c_int32, POINTER(c_byte), POINTER(
+            VTFLibStructures.CreateOptions)]
     ImageCreateSingle.restype = c_bool
 
     def image_create_single(self, width, height, image_data, options):
-        image_data = cast(image_data,POINTER(c_byte))
+        image_data = cast(image_data, POINTER(c_byte))
         return self.ImageCreateSingle(width, height, image_data, options)
 
     ImageDestroy = vtflib_cdll.vlImageDestroy
@@ -198,7 +205,8 @@ class VTFLib:
     ImageLoad.restype = c_bool
 
     def image_load(self, filename, header_only=False):
-        return self.ImageLoad(create_string_buffer(filename.encode('ascii')), header_only)
+        return self.ImageLoad(create_string_buffer(
+            filename.encode('ascii')), header_only)
 
     ImageSave = vtflib_cdll.vlImageSave
     ImageSave.argtypes = [c_char_p]
@@ -309,9 +317,13 @@ class VTFLib:
 
         return pointer_to_array(self.convert_to_rgba8888(), size)
 
-
     ImageSetData = vtflib_cdll.vlImageSetData
-    ImageSetData.argtypes = [c_uint32, c_uint32, c_uint32, c_uint32, POINTER(c_byte)]
+    ImageSetData.argtypes = [
+        c_uint32,
+        c_uint32,
+        c_uint32,
+        c_uint32,
+        POINTER(c_byte)]
     ImageSetData.restype = None
 
     def set_image_data(self, frame, face, slice, mipmap_level, data):
@@ -364,7 +376,8 @@ class VTFLib:
     ImageGenerateMipmaps.restype = c_bool
 
     def generate_mipmaps(self, face, frame, mipmap_filter, sharpness_filter):
-        return self.ImageGenerateMipmaps(face, frame, mipmap_filter, sharpness_filter)
+        return self.ImageGenerateMipmaps(
+            face, frame, mipmap_filter, sharpness_filter)
 
     ImageGenerateAllMipmaps = vtflib_cdll.vlImageGenerateAllMipmaps
     ImageGenerateAllMipmaps.argtypes = [c_uint32, c_uint32]
@@ -384,15 +397,20 @@ class VTFLib:
     ImageGenerateNormalMap.argtypes = [c_uint32, c_uint32, c_uint32, c_uint32]
     ImageGenerateNormalMap.restype = c_bool
 
-    def generate_normal_maps(self, frame, kernel_filter, height_conversion_method, normal_alpha_result):
-        return self.ImageGenerateNormalMap(frame, kernel_filter, height_conversion_method, normal_alpha_result)
+    def generate_normal_maps(self, frame, kernel_filter,
+                             height_conversion_method, normal_alpha_result):
+        return self.ImageGenerateNormalMap(
+            frame, kernel_filter, height_conversion_method, normal_alpha_result)
 
     ImageGenerateAllNormalMaps = vtflib_cdll.vlImageGenerateAllNormalMaps
-    ImageGenerateAllNormalMaps.argtypes = [c_uint32, c_uint32, c_uint32, c_uint32]
+    ImageGenerateAllNormalMaps.argtypes = [
+        c_uint32, c_uint32, c_uint32, c_uint32]
     ImageGenerateAllNormalMaps.restype = c_bool
 
-    def generate_all_normal_maps(self, kernel_filter, height_conversion_method, normal_alpha_result):
-        return self.ImageGenerateAllNormalMaps(kernel_filter, height_conversion_method, normal_alpha_result)
+    def generate_all_normal_maps(
+            self, kernel_filter, height_conversion_method, normal_alpha_result):
+        return self.ImageGenerateAllNormalMaps(
+            kernel_filter, height_conversion_method, normal_alpha_result)
 
     ImageGenerateSphereMap = vtflib_cdll.vlImageGenerateSphereMap
     ImageGenerateSphereMap.argtypes = []
@@ -409,17 +427,20 @@ class VTFLib:
         return self.ImageComputeReflectivity()
 
     ImageComputeImageSize = vtflib_cdll.vlImageComputeImageSize
-    ImageComputeImageSize.argtypes = [c_int32, c_uint32, c_int32, c_uint32, c_int32]
+    ImageComputeImageSize.argtypes = [
+        c_int32, c_uint32, c_int32, c_uint32, c_int32]
     ImageComputeImageSize.restype = c_uint32
 
     def compute_image_size(self, width, height, depth, mipmaps, image_format):
-        return self.ImageComputeImageSize(width, height, depth, mipmaps, image_format)
+        return self.ImageComputeImageSize(
+            width, height, depth, mipmaps, image_format)
 
     ImageFlipImage = vtflib_cdll.vlImageFlipImage
     ImageFlipImage.argtypes = [POINTER(c_byte), c_uint32, c_int32]
     ImageFlipImage.restype = None
 
-    def flip_image(self, image_data,width=None,height=None,depth=1,mipmaps =-1):
+    def flip_image(self, image_data, width=None,
+                   height=None, depth=1, mipmaps=-1):
         width = width or self.width()
         height = height or self.height()
         depth = depth or self.depth()
@@ -429,17 +450,17 @@ class VTFLib:
             image_data = self.convert_to_rgba8888()
         image_data = cast(image_data, POINTER(c_byte))
         self.ImageFlipImage(image_data, width, height)
-        size = self.compute_image_size(width,height, depth, mipmaps,
+        size = self.compute_image_size(width, height, depth, mipmaps,
                                        VTFLibEnums.ImageFormat.ImageFormatRGBA8888)
 
         return pointer_to_array(image_data, size)
 
-    def flip_image_external(self, image_data,width=None,height=None):
+    def flip_image_external(self, image_data, width=None, height=None):
         width = width or self.width()
         height = height or self.height()
         image_data_p = cast(image_data, POINTER(c_byte))
         self.ImageFlipImage(image_data_p, width, height)
-        size = width*height*4
+        size = width * height * 4
 
         return pointer_to_array(image_data, size)
 
@@ -458,7 +479,12 @@ class VTFLib:
         return pointer_to_array(image_data, size)
 
     ImageConvertToRGBA8888 = vtflib_cdll.vlImageConvertToRGBA8888
-    ImageConvertToRGBA8888.argtypes = [POINTER(c_byte), POINTER(c_byte), c_uint32, c_int32, c_uint32]
+    ImageConvertToRGBA8888.argtypes = [
+        POINTER(c_byte),
+        POINTER(c_byte),
+        c_uint32,
+        c_int32,
+        c_uint32]
     ImageConvertToRGBA8888.restype = None
 
     def convert_to_rgba8888(self):
@@ -473,12 +499,26 @@ class VTFLib:
             return 0
 
     ImageConvert = vtflib_cdll.vlImageConvert
-    ImageConvert.argtypes = [POINTER(c_byte), POINTER(c_byte), c_uint32, c_int32, c_uint32, c_int32]
+    ImageConvert.argtypes = [
+        POINTER(c_byte),
+        POINTER(c_byte),
+        c_uint32,
+        c_int32,
+        c_uint32,
+        c_int32]
     ImageConvert.restype = None
 
     def convert(self, format):
-        print("Converting from {} to {}".format(self.image_format().name, VTFLibEnums.ImageFormat(format).name))
-        new_size = self.compute_image_size(self.width(), self.height(), self.depth(), self.mipmap_count(), format)
+        print(
+            "Converting from {} to {}".format(
+                self.image_format().name,
+                VTFLibEnums.ImageFormat(format).name))
+        new_size = self.compute_image_size(
+            self.width(),
+            self.height(),
+            self.depth(),
+            self.mipmap_count(),
+            format)
         new_buffer = cast((c_byte * new_size)(), POINTER(c_byte))
         if not self.ImageConvert(self.ImageGetData(0, 0, 0, 0), new_buffer, self.width(), self.height(),
                                  self.image_format().value, format):
@@ -494,7 +534,7 @@ class VTFLib:
     def get_proc(self, proc):
         try:
             return self.GetProc(proc).contents.value
-        except:
+        except BaseException:
             sys.stderr.write("ERROR IN GetProc\n")
             return -1
 

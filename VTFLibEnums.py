@@ -28,7 +28,7 @@ class CEnumeration(c_uint32, metaclass=EnumerationType):
 
     def __repr__(self):
         value = self.value
-        return "<{} {}>".format(self.__class__.__name__,self.name)
+        return "<{} {}>".format(self.__class__.__name__, self.name)
 
     @property
     def name(self):
@@ -38,13 +38,15 @@ class CEnumeration(c_uint32, metaclass=EnumerationType):
         if isinstance(other, int):
             return self.value == other
 
-        return type(self) == type(other) and self.value == other.value
+        return isinstance(self, type(other)) and self.value == other.value
 
     @classmethod
     def from_param(self, value):
 
         # print('lel',value)
         self.value = value
+
+
 class CFlag(c_uint32, metaclass=EnumerationType):
     _members_ = {}
 
@@ -54,10 +56,10 @@ class CFlag(c_uint32, metaclass=EnumerationType):
         for val, name in self._reverse_map_.items():
             if value & val:
                 keys.append(name)
-        return "<{} {}>".format(self.__class__.__name__," | ".join(keys))
+        return "<{} {}>".format(self.__class__.__name__, " | ".join(keys))
 
-    def get_flag(self,flag):
-        return bool(self.value&flag)
+    def get_flag(self, flag):
+        return bool(self.value & flag)
 
     @property
     def name(self):
@@ -67,7 +69,7 @@ class CFlag(c_uint32, metaclass=EnumerationType):
         if isinstance(other, int):
             return self.value == other
 
-        return type(self) == type(other) and self.value == other.value
+        return isinstance(self, type(other)) and self.value == other.value
 
     @classmethod
     def from_param(self, value):
@@ -283,11 +285,14 @@ class ResourceType(CEnumeration):
     ResourceTypeLowResolutionImage = 0x01
     ResourceTypeImage = 0x30
     ResourceTypeSheet = 0x10
-    ResourceTypeCRC = ord('C') | (ord('R') << 8) | (ord('C') << 24) | (ResourceFlag.ResourceFlagNoDataChunk << 32)
+    ResourceTypeCRC = ord('C') | (
+        ord('R') << 8) | (
+        ord('C') << 24) | (
+            ResourceFlag.ResourceFlagNoDataChunk << 32)
     ResourceTypeLODControl = ord('L') | (ord('O') << 8) | (ord('D') << 24) | (
-                ResourceFlag.ResourceFlagNoDataChunk << 32)
+        ResourceFlag.ResourceFlagNoDataChunk << 32)
     ResourceTypeTextureSettingsEx = ord('T') | (ord('S') << 8) | (ord('O') << 24) | (
-                ResourceFlag.ResourceFlagNoDataChunk << 32)
+        ResourceFlag.ResourceFlagNoDataChunk << 32)
     ResourceTypeKeyValueData = ord('K') | (ord('V') << 8) | (ord('D') << 24)
 
 
