@@ -21,7 +21,7 @@ if platform_name == "Windows":
                                     bits='',
                                     linkage='')[0] == "64bit"
     vtf_lib_name = "VTFLib.x64.dll" if is64bit else "VTFLib.x86.dll"
-    full_path = os.path.dirname(__file__)
+    full_path = os.path.join(os.path.dirname(__file__), 'bin')
 elif platform_name == "Linux":
     # On linux we assume this lib is in a predictable location
     # VTFLib Linux: https://github.com/panzi/VTFLib
