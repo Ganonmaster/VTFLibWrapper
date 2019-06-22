@@ -15,18 +15,20 @@ except Exception:
                    VTFLibConstants)
 
 platform_name = platform.system()
+full_path = os.path.join(os.path.dirname(__file__), 'bin')
 
 if platform_name == "Windows":
     is64bit = platform.architecture(executable=sys.executable,
                                     bits='',
                                     linkage='')[0] == "64bit"
     vtf_lib_name = "VTFLib.x64.dll" if is64bit else "VTFLib.x86.dll"
-    full_path = os.path.join(os.path.dirname(__file__), 'bin')
+    vtf_lib_name = os.path.join(full_path, vtf_lib_name)
 elif platform_name == "Linux":
     # On linux we assume this lib is in a predictable location
     # VTFLib Linux: https://github.com/panzi/VTFLib
     # requires: libtxc_dxtn
-    vtf_lib_name = "libVTFLib13.so"
+    dxtn_lib_name = os.path.join(full_path, "libtxc_dxtn.so")
+    vtf_lib_name = os.path.join(full_path, "libVTFLib13.so")
 else:
     raise NotImplementedError()
 
@@ -41,6 +43,7 @@ class VTFLib:
     if platform.system() == "Windows":
         vtflib_cdll = WinDLL(os.path.join(full_path, vtf_lib_name))
     elif platform.system() == "Linux":
+        dxtn_cdll = cdll.LoadLibrary(dxtn_lib_name)
         vtflib_cdll = cdll.LoadLibrary(vtf_lib_name)
 
     def __init__(self):
